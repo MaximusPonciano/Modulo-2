@@ -1,27 +1,35 @@
+import { json } from 'co-body'
 
 export async function findPokemon(ctx: Context) {
   const {
     clients: { pokemon: pokeClient },
-    vtex: { route },
   } = ctx
 
-  const id = route.params.id
+  const body = await json(ctx.req)
 
-  if (!id) {
+
+  if (!body || !body.id) {
     ctx.status = 400
-    ctx.body = 'Por favor, informe o ID do Pokemon.'
+    ctx.body = 'Por favor, informe o ID do Pokémon'
     return
   }
 
-  const height = Number(route.params.height)
+  const id = body.id
 
-  if (height >= 15) {
-    ctx.status = 400
-    ctx.body = 'O pokemon é muito grande.'
-    return
+  try {
+    const response = await pokeClient.getPokeById(Number(id))
+
+    if (response.height >= 15) {
+      ctx.status = 400
+      ctx.body = 'O Pokémon é muito grande.'
+      return
+    }
+
+    ctx.status = 200
+    ctx.body = response
+  } catch (error) {
+    console.error('Erro ao buscar Pokémon:', error)
+    ctx.status = 500
+    ctx.body = 'Erro ao buscar o Pokémon.'
   }
-
-  const response = await pokeClient.getPokeById(Number(id))
-
-  ctx.body = response
 }
