@@ -7,10 +7,9 @@ export async function findPokemon(ctx: Context) {
 
   const body = await json(ctx.req)
 
-
   if (!body || !body.id) {
     ctx.status = 400
-    ctx.body = 'Por favor, informe o ID do Pokémon'
+    ctx.body = { message: 'Por favor, informe o ID do Pokémon' }
     return
   }
 
@@ -21,7 +20,7 @@ export async function findPokemon(ctx: Context) {
 
     if (response.height >= 15) {
       ctx.status = 400
-      ctx.body = 'O Pokémon é muito grande.'
+      ctx.body = { message: 'O Pokémon é muito grande.' }
       return
     }
 
@@ -30,6 +29,7 @@ export async function findPokemon(ctx: Context) {
   } catch (error) {
     console.error('Erro ao buscar Pokémon:', error)
     ctx.status = 500
-    ctx.body = 'Erro ao buscar o Pokémon.'
+    ctx.body = { message: 'Erro ao buscar o Pokémon.' }
   }
 }
+
